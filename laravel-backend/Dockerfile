@@ -23,14 +23,11 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy composer files first
-COPY composer.json composer.lock* ./
+# Copy the entire Laravel application first
+COPY . .
 
 # Install dependencies with better error handling
 RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
-
-# Copy the rest of the application
-COPY . .
 
 # Set proper permissions
 RUN chown -R www-data:www-data /var/www/html \
