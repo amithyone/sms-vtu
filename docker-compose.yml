@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  # Laravel Backend API
+  laravel-api:
+    build:
+      context: ./laravel-backend
+      dockerfile: Dockerfile
+    container_name: sms-laravel-api
+    restart: unless-stopped
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
+    env_file:
+      - ./laravel-backend/.env
+    volumes:
+      - ./laravel-backend:/var/www/html
+      - /var/www/html/storage
+    networks:
+      - sms-network
+    ports:
+      - "8000:8000"
+
+  # React Frontend
+  react-frontend:
+    build:
+      context: ./newsms
+      dockerfile: Dockerfile
+    container_name: sms-react-frontend
+    restart: unless-stopped
+    environment:
+      - VITE_API_URL=http://laravel-api:8000
+    networks:
+      - sms-network
+    ports:
+      - "3000:3000"
+    depends_on:
+      - laravel-api
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: sms-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/nginx/ssl
+    networks:
+      - sms-network
+    depends_on:
+      - laravel-api
+      - react-frontend
+
+networks:
+  sms-network:
+    driver: bridge

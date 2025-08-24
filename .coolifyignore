@@ -1,0 +1,40 @@
+# Git
+.git
+.gitignore
+
+# Documentation
+*.md
+docs/
+
+# Development files
+.env.local
+.env.development
+.env.test
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Node modules (will be installed during build)
+node_modules/
+
+# Vendor (will be installed during build)
+vendor/
+
+# Build artifacts
+dist/
+build/
