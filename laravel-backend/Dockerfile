@@ -26,13 +26,18 @@ WORKDIR /var/www/html
 # Copy the entire Laravel application first
 COPY . .
 
-# Install dependencies with better error handling
-RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
-
-# Set proper permissions
-RUN chown -R www-data:www-data /var/www/html \
+# Create necessary directories and set permissions before composer install
+RUN mkdir -p /var/www/html/bootstrap/cache \
+    && mkdir -p /var/www/html/storage/logs \
+    && mkdir -p /var/www/html/storage/framework/cache \
+    && mkdir -p /var/www/html/storage/framework/sessions \
+    && mkdir -p /var/www/html/storage/framework/views \
+    && chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage \
     && chmod -R 755 /var/www/html/bootstrap/cache
+
+# Install dependencies with better error handling
+RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
 
 # Create .env file if it doesn't exist
 RUN if [ ! -f .env ]; then cp .env.example .env; fi
